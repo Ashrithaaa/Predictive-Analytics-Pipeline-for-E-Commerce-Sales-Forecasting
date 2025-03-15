@@ -10,6 +10,25 @@ This project develops an end-to-end **predictive analytics pipeline** for foreca
 - **XGBoost Model**: Enhances predictions using gradient boosting techniques.
 - **Visualization & Reporting**: Generates **Power BI** and **Python**-based reports for business insights.
 
+## Dataset includes
+The dataset contains multiple CSV files, including:
+
+Amazon Sale Report.csv
+International Sale Report.csv
+Sale Report.csv
+Expense IIGF.csv
+P & L March 2021.csv
+May-2022.csv
+Cloud Warehouse Comparison Chart.csv
+
+The dataset includes various sales reports. Key columns from the Amazon Sale Report and International Sale Report that will be useful for our forecasting model:
+
+Date (Transaction Date)
+Sales Amount (Revenue)
+Category (Product category)
+SKU (Stock Keeping Unit)
+Fulfillment Type (Amazon vs. Merchant)
+Ship City, State, Country (Location-based insights)
 
 ## Requirements
 - Python 3.8+
