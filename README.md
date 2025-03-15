@@ -21,10 +21,7 @@ This project develops an end-to-end **predictive analytics pipeline** for foreca
 - XGBoost Model MAE: **Y.YY**
 - Interactive visualizations for sales trends & forecasts
 
-## Future Enhancements
-- Integrate more external features (e.g., promotions, holidays)
-- Explore deep learning models (LSTMs, transformers)
-- Automate deployment with a Flask API
+
 
 
 
