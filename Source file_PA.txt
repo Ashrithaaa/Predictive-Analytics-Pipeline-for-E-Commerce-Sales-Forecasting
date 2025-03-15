@@ -1,0 +1,55 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from statsmodels.tsa.arima.model import ARIMA
+from xgboost import XGBRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+class SalesForecasting:
+    def __init__(self, data_path):
+        self.df = pd.read_csv(data_path, parse_dates=["Transaction_Date"], index_col="Transaction_Date")
+        self.df = self.df.resample("M").sum()
+        self.train = None
+        self.test = None
+    
+    def train_test_split(self, split_ratio=0.8):
+        train_size = int(len(self.df) * split_ratio)
+        self.train, self.test = self.df[:train_size], self.df[train_size:]
+    
+    def arima_forecast(self):
+        model = ARIMA(self.train["Sales_Amount"], order=(5,1,0))
+        fit = model.fit()
+        return fit.forecast(steps=len(self.test))
+    
+    def xgb_forecast(self):
+        X = np.arange(len(self.df)).reshape(-1, 1)
+        y = self.df["Sales_Amount"].values
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+        model = XGBRegressor(objective="reg:squarederror")
+        model.fit(X_train, y_train)
+        return model.predict(X_test), y_test
+    
+    def evaluate(self, arima_pred, xgb_pred, y_test):
+        arima_mae = mean_absolute_error(self.test["Sales_Amount"], arima_pred)
+        xgb_mae = mean_absolute_error(y_test, xgb_pred)
+        print(f"ARIMA MAE: {arima_mae:.2f}, XGBoost MAE: {xgb_mae:.2f}")
+    
+    def plot_results(self, arima_pred, xgb_pred):
+        plt.figure(figsize=(12, 6))
+        plt.plot(self.df.index, self.df["Sales_Amount"], label="Actual Sales")
+        plt.plot(self.test.index, arima_pred, label="ARIMA Forecast", linestyle="dashed")
+        plt.plot(self.test.index, xgb_pred, label="XGBoost Forecast", linestyle="dotted")
+        plt.legend()
+        plt.title("E-Commerce Sales Forecasting")
+        plt.show()
+    
+if __name__ == "__main__":
+    data_path = "data/ecommerce_sales.csv"
+    forecasting = SalesForecasting(data_path)
+    forecasting.train_test_split()
+    arima_pred = forecasting.arima_forecast()
+    xgb_pred, y_test = forecasting.xgb_forecast()
+    forecasting.evaluate(arima_pred, xgb_pred, y_test)
+    forecasting.plot_results(arima_pred, xgb_pred)
